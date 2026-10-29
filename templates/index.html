@@ -1,0 +1,1104 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SignBridge AI | Communication Dashboard</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --bg: #101b35;
+    --panel: rgba(42, 59, 94, .68);
+    --border: rgba(206, 225, 255, .20);
+    --text: #f4f7ff;
+    --muted: #aabbd7;
+    --cyan: #5ce0d7;
+    --purple: #8b79ff;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    min-height: 100vh;
+    padding: 24px;
+    color: var(--text);
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    background:
+      radial-gradient(ellipse at 5% 0%, #c69d9b 0%, transparent 23%),
+      radial-gradient(ellipse at 95% 5%, #344fa5 0%, transparent 30%),
+      radial-gradient(ellipse at 5% 95%, #64558e 0%, transparent 30%),
+      linear-gradient(125deg, #172b4b, #101a33 65%, #111d37);
+}
+
+button, textarea { font: inherit; }
+button { cursor: pointer; color: inherit; }
+button:hover { filter: brightness(1.12); transform: translateY(-1px); }
+button, a { transition: .2s ease; }
+a { color: inherit; text-decoration: none; }
+
+.app {
+    max-width: 1600px;
+    min-height: calc(100vh - 48px);
+    margin: auto;
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr);
+    border: 1px solid var(--border);
+    border-radius: 26px;
+    overflow: hidden;
+    background: rgba(25, 41, 70, .58);
+    box-shadow: 0 25px 80px #050b1d60;
+    backdrop-filter: blur(24px);
+}
+
+.sidebar {
+    padding: 25px 19px;
+    border-right: 1px solid var(--border);
+    background: linear-gradient(160deg, #47648d85, #1c315b85);
+    display: flex;
+    flex-direction: column;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.brand-icon {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #60e6d4, #4d9ed7);
+    font-size: 25px;
+}
+
+.brand-sub {
+    color: #afc1dc;
+    font-size: 10px;
+    margin: 5px 0 46px 8px;
+}
+
+.nav {
+    display: grid;
+    gap: 8px;
+}
+
+.nav a {
+    padding: 14px 12px;
+    border-radius: 16px;
+    color: #d4deef;
+    font-size: 13px;
+}
+
+.nav a span { margin-right: 12px; font-size: 18px; }
+.nav a:hover, .nav a.active {
+    background: linear-gradient(100deg, #63d9df55, #7899d52c);
+    color: white;
+}
+
+.side-quote {
+    margin-top: auto;
+    min-height: 285px;
+    padding: 25px 16px;
+    border: 1px solid #ffffff12;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background:
+      radial-gradient(ellipse at 100% 0%, #b38bea66, transparent 42%),
+      linear-gradient(155deg, #35557caa, #25365d99);
+    color: #d6e3f7;
+    line-height: 1.7;
+}
+
+.side-quote .hands { font-size: 42px; margin-bottom: 20px; }
+.side-bottom { font-size: 11px; color: #aabbd7; margin-top: 22px; }
+
+.main { min-width: 0; }
+
+.topbar {
+    min-height: 96px;
+    padding: 20px 27px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 1px solid #ffffff15;
+}
+
+.greeting { display: flex; align-items: center; gap: 15px; }
+.greeting .wave { font-size: 31px; }
+.greeting h1 { font-size: 21px; font-weight: 650; }
+.greeting p { color: #c0cde1; font-size: 12px; margin-top: 5px; }
+
+.top-actions { display: flex; align-items: center; gap: 12px; }
+
+.pill {
+    padding: 12px 17px;
+    border: 1px solid #ffffff12;
+    background: #a6c5ef12;
+    border-radius: 30px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #63e9b8;
+    margin-right: 8px;
+    box-shadow: 0 0 12px #63e9b877;
+}
+
+.round-btn {
+    width: 44px;
+    height: 44px;
+    border: 1px solid #ffffff14;
+    border-radius: 50%;
+    background: #ffffff0d;
+    font-size: 19px;
+}
+
+.content { padding: 20px 23px; }
+
+.dashboard {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(235px, .95fr) minmax(250px, 1fr);
+    gap: 17px;
+    align-items: start;
+}
+
+.column { min-width: 0; display: grid; gap: 17px; }
+
+.card {
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    background: linear-gradient(145deg, #ffffff12, #ffffff05);
+    box-shadow: 0 12px 32px #07102718;
+    backdrop-filter: blur(20px);
+}
+
+.card-pad { padding: 16px; }
+
+.card-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.card-title .title-left { display: flex; align-items: center; gap: 10px; }
+.card-title .title-icon { font-size: 20px; }
+
+.live-tag {
+    padding: 7px 10px;
+    border-radius: 30px;
+    color: #8af0ce;
+    background: #65e8b51c;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.camera-box {
+    min-height: 335px;
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    border: 1px solid #ffffff35;
+    border-radius: 14px;
+    background:
+      radial-gradient(ellipse at 50% 40%, #6d7993, transparent 55%),
+      linear-gradient(140deg, #6b6974, #293c58 55%, #182a47);
+}
+
+#camera-video {
+    width: 100%;
+    height: 335px;
+    object-fit: cover;
+    display: none;
+    transform: scaleX(-1);
+}
+
+.camera-placeholder {
+    padding: 25px;
+    text-align: center;
+    color: #e2eaf7;
+}
+
+.camera-placeholder .camera-emoji { font-size: 48px; margin-bottom: 12px; }
+.camera-placeholder p { font-size: 12px; color: #c3d0e3; margin-top: 8px; }
+
+.camera-overlay {
+    position: absolute;
+    inset: 20% 24%;
+    border: 1px solid #81eee3;
+    border-radius: 12px;
+    pointer-events: none;
+    opacity: .8;
+}
+
+.camera-overlay::before, .camera-overlay::after {
+    content: "";
+    position: absolute;
+    width: 23px;
+    height: 23px;
+    border-color: #86f3e5;
+    border-style: solid;
+}
+
+.camera-overlay::before {
+    top: -1px; left: -1px;
+    border-width: 2px 0 0 2px;
+}
+
+.camera-overlay::after {
+    bottom: -1px; right: -1px;
+    border-width: 0 2px 2px 0;
+}
+
+.camera-label {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    font-size: 10px;
+    background: #111c30bf;
+    padding: 7px 10px;
+    border-radius: 20px;
+}
+
+.camera-controls {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    display: flex;
+    gap: 8px;
+}
+
+.camera-controls button {
+    width: 39px;
+    height: 39px;
+    border: 1px solid #ffffff30;
+    border-radius: 12px;
+    background: #14213bc9;
+    font-size: 17px;
+}
+
+.btn {
+    padding: 11px 14px;
+    border: 1px solid #ffffff18;
+    border-radius: 11px;
+    background: #ffffff0c;
+    font-size: 12px;
+}
+
+.btn-primary {
+    background: linear-gradient(110deg, #4ac6e4, #8a65ed);
+    color: white;
+    border: 0;
+    font-weight: 650;
+}
+
+.camera-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.note { font-size: 10px; line-height: 1.6; color: #b2c0d6; margin-top: 11px; }
+
+.detect-card { text-align: center; }
+
+.detect-symbol {
+    width: 112px;
+    height: 112px;
+    margin: 7px auto 14px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    font-size: 47px;
+    font-weight: 700;
+    background: linear-gradient(130deg, #50bcd8, #6251cf);
+    box-shadow: 0 0 28px #6c91f333;
+}
+
+.detect-label { color: #cad7eb; font-size: 12px; }
+.confidence { color: #a9f1db; margin-top: 8px; font-size: 12px; }
+
+.progress {
+    height: 9px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #ffffff15;
+    margin-top: 10px;
+}
+
+.progress span {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #62e8b9, #51d9c7);
+}
+
+#sentence {
+    width: 100%;
+    min-height: 55px;
+    resize: vertical;
+    padding: 14px;
+    border: 1px solid #ffffff1c;
+    border-radius: 12px;
+    outline: none;
+    background: #ffffff09;
+    color: white;
+    font-size: 13px;
+}
+
+#sentence:focus { border-color: #69dcd7; }
+.sentence-buttons { display: flex; gap: 8px; margin-top: 10px; }
+.sentence-buttons .btn { flex: 1; }
+
+.speak-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 13px;
+    border: 0;
+    border-radius: 12px;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    background: linear-gradient(100deg, #4fc5e4, #a25be7);
+}
+
+.history-list { display: grid; gap: 7px; }
+.history-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid #ffffff08;
+    border-radius: 13px;
+    background: #ffffff08;
+}
+
+.history-initial {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    background: linear-gradient(135deg, #50a7d5, #7164c7);
+    font-weight: 700;
+}
+
+.history-copy { min-width: 0; flex: 1; }
+.history-copy p { font-size: 11px; overflow-wrap: anywhere; }
+.history-copy small { display: block; color: #aab9d2; font-size: 9px; margin-top: 4px; }
+.history-item button { border: 0; background: transparent; font-size: 17px; }
+
+.phrases { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+
+.phrase {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 9px;
+    text-align: left;
+    border: 1px solid #ffffff17;
+    border-radius: 12px;
+    font-size: 11px;
+    background: #ffffff09;
+}
+
+.phrase span { font-size: 19px; }
+
+.pink { background: linear-gradient(120deg, #e26c85bd, #d75074a8); }
+.blue { background: linear-gradient(120deg, #469cd7b8, #4678d4a8); }
+.green { background: linear-gradient(120deg, #329f7cbd, #248d74a8); }
+.purple { background: linear-gradient(120deg, #8064d7bd, #6744c9b8); }
+.orange { background: linear-gradient(120deg, #e8a04abf, #d17a45b8); }
+.teal { background: linear-gradient(120deg, #36b6c9bd, #2586b8b8); }
+
+.more-phrases { width: 100%; margin-top: 10px; }
+
+.status-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: 18px;
+    overflow: hidden;
+}
+
+.status-item { padding: 18px 14px; min-width: 0; }
+.status-item + .status-item { border-left: 1px solid #ffffff16; }
+.status-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 13px;
+    background: linear-gradient(135deg, #42c8c5, #487cb7);
+    margin-bottom: 8px;
+    font-size: 19px;
+}
+.status-item h4 { font-size: 12px; font-weight: 600; }
+.status-item p { font-size: 10px; color: #b1c0d8; margin-top: 4px; overflow-wrap: anywhere; }
+
+.tip {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 17px;
+    padding: 17px;
+}
+
+.tip-icon {
+    width: 47px;
+    height: 47px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #e5c96c22;
+    font-size: 25px;
+}
+
+.tip h3 { font-size: 13px; margin-bottom: 5px; }
+.tip p { font-size: 10px; color: #bac8df; line-height: 1.7; }
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 4px 0;
+    color: #bdc9dc;
+    font-size: 10px;
+}
+
+.footer-links { display: flex; gap: 14px; }
+
+.toast {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    max-width: calc(100vw - 48px);
+    padding: 13px 18px;
+    border: 1px solid #ffffff24;
+    border-radius: 13px;
+    background: #1d3153;
+    box-shadow: 0 10px 35px #0005;
+    font-size: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: .2s;
+    z-index: 10;
+}
+
+.toast.show { opacity: 1; transform: translateY(0); }
+
+@media (min-width: 1500px) {
+    .camera-box, #camera-video { height: 390px; }
+}
+
+@media (max-width: 1150px) {
+    .app { grid-template-columns: 205px minmax(0, 1fr); }
+    .dashboard { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .column:last-child { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; }
+    .side-quote { min-height: 210px; }
+}
+
+@media (max-width: 720px) {
+    body { padding: 8px; }
+    .app { grid-template-columns: 1fr; border-radius: 18px; }
+    .sidebar { border-right: 0; border-bottom: 1px solid var(--border); padding: 15px; }
+    .brand-sub, .side-quote, .side-bottom { display: none; }
+    .brand { margin-bottom: 13px; }
+    .nav { display: flex; flex-wrap: wrap; gap: 4px; }
+    .nav a { padding: 9px; font-size: 11px; }
+    .nav a span { margin-right: 5px; }
+    .topbar { padding: 17px; align-items: flex-start; }
+    .greeting h1 { font-size: 17px; }
+    .greeting p { font-size: 10px; }
+    .pill { display: none; }
+    .content { padding: 13px; }
+    .dashboard { grid-template-columns: 1fr; }
+    .column:last-child { grid-column: auto; grid-template-columns: 1fr; }
+    .camera-box, #camera-video { min-height: 280px; height: 280px; }
+    .status-row { grid-template-columns: 1fr 1fr; }
+    .status-item:nth-child(3) { border-left: 0; border-top: 1px solid #ffffff16; }
+    .status-item:nth-child(4) { border-top: 1px solid #ffffff16; }
+    .footer { flex-wrap: wrap; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<aside class="sidebar">
+    <div class="brand">
+        <div class="brand-icon">✋</div>
+        <div>SignBridge AI</div>
+    </div>
+    <p class="brand-sub">Bridging Science, Connecting Worlds</p>
+
+    <nav class="nav">
+        <a class="active" href="#home"><span>⌂</span>Home</a>
+        <a href="#translator"><span>▣</span>Live Translator</a>
+        <a href="#phrases"><span>▢</span>Quick Phrases</a>
+        <a href="#history"><span>◷</span>History</a>
+        <a href="#settings"><span>⚙</span>Settings</a>
+        <a href="#about"><span>ⓘ</span>About</a>
+    </nav>
+
+    <div class="side-quote">
+        <div class="hands">🤝</div>
+        <p>Every sign<br>is a voice.<br>Every voice<br>matters.</p>
+    </div>
+    <div class="side-bottom">Made for accessible communication ♡</div>
+</aside>
+
+<main class="main" id="home">
+<header class="topbar">
+    <div class="greeting">
+        <div class="wave">👋</div>
+        <div>
+            <h1>Hello, Friend!</h1>
+            <p>Let's make communication easier today.</p>
+        </div>
+    </div>
+    <div class="top-actions">
+        <div class="pill"><span class="dot"></span><span id="app-status">Ready to begin</span></div>
+        <button class="round-btn" id="header-speak" title="Speak sentence">♬</button>
+        <button class="round-btn" title="Profile" onclick="notify('Welcome to SignBridge AI!')">♟</button>
+    </div>
+</header>
+
+<div class="content">
+<div class="dashboard">
+
+<!-- CAMERA -->
+<section class="column">
+    <div class="card card-pad" id="translator">
+        <div class="card-title">
+            <div class="title-left"><span class="title-icon">📹</span>Live Sign Recognition</div>
+            <span class="live-tag"><span class="dot"></span>Camera</span>
+        </div>
+
+        <div class="camera-box">
+            <video id="camera-video" autoplay playsinline muted></video>
+            <div class="camera-placeholder" id="camera-placeholder">
+                <div class="camera-emoji">📷</div>
+                <strong>Your camera preview</strong>
+                <p>Start your camera to see yourself here.</p>
+            </div>
+            <div class="camera-label" id="camera-state">Camera off</div>
+            <div class="camera-overlay"></div>
+            <div class="camera-controls">
+                <button id="start-camera" title="Start camera">📷</button>
+                <button id="stop-camera" title="Stop camera">⏹</button>
+                <button id="flip-camera" title="Camera note">↻</button>
+            </div>
+        </div>
+
+        <div class="camera-actions">
+            <button class="btn btn-primary" id="start-camera-text">Start Camera</button>
+            <button class="btn" id="stop-camera-text">Stop Camera</button>
+        </div>
+        <p class="note" id="camera-help">Camera access requires your permission. Sign recognition is not connected yet.</p>
+    </div>
+
+    <div class="card status-row">
+        <div class="status-item">
+            <div class="status-icon">▣</div>
+            <h4>Camera <span class="dot" id="camera-dot"></span></h4>
+            <p id="camera-status">Not connected</p>
+        </div>
+        <div class="status-item">
+            <div class="status-icon" style="background:linear-gradient(135deg,#8775ee,#5c70c9)">♧</div>
+            <h4>Model</h4>
+            <p id="model-status">ISL model loaded</p>
+        </div>
+        <div class="status-item">
+            <div class="status-icon" style="background:linear-gradient(135deg,#7769dc,#514f9d)">▤</div>
+            <h4>Database</h4>
+            <p>Browser history</p>
+        </div>
+        <div class="status-item">
+            <div class="status-icon" style="background:linear-gradient(135deg,#678ce6,#6b60c9)">♫</div>
+            <h4>Speech</h4>
+            <p>Browser TTS</p>
+        </div>
+    </div>
+
+    <div class="card tip" id="about">
+        <div class="tip-icon">💡</div>
+        <div>
+            <h3>Did you know?</h3>
+            <p>SignBridge AI aims to support communication through Indian Sign Language (ISL). Reliable recognition requires a trained and tested model.</p>
+        </div>
+    </div>
+</section>
+
+<!-- DETECTION AND SENTENCE -->
+<section class="column">
+    <div class="card card-pad detect-card">
+        <div class="card-title">
+            <div class="title-left"><span class="title-icon">✥</span>Detected Sign</div>
+        </div>
+        <div class="detect-symbol" id="prediction-symbol">✋</div>
+        <p class="detect-label" id="prediction-label">Model not connected</p>
+        <p class="confidence" id="prediction-confidence">No prediction available</p>
+        <div class="progress"><span id="confidence-bar"></span></div>
+        <p class="note">Predictions will appear here after an ISL recognition model is integrated.</p>
+    </div>
+
+    <div class="card card-pad">
+        <div class="card-title">
+            <div class="title-left"><span class="title-icon">▤</span>Sentence Builder</div>
+        </div>
+        <textarea id="sentence" placeholder="Choose a quick phrase or type a sentence..." aria-label="Sentence to speak"></textarea>
+        <div class="sentence-buttons">
+            <button class="btn" id="clear-sentence">♲ Clear</button>
+            <button class="btn" id="copy-sentence">▢ Copy</button>
+        </div>
+        <button class="speak-btn" id="speak-sentence">🔊 &nbsp; Speak</button>
+        <p class="note" id="speech-status" aria-live="polite">Your text can be spoken using your browser.</p>
+    </div>
+</section>
+
+<!-- HISTORY AND PHRASES -->
+<section class="column">
+    <div class="card card-pad" id="history">
+        <div class="card-title">
+            <div class="title-left"><span class="title-icon">◷</span>Conversation History</div>
+            <button class="btn" id="clear-history">Clear</button>
+        </div>
+        <div class="history-list" id="history-list">
+            <p class="note">Your spoken phrases will appear here.</p>
+        </div>
+    </div>
+
+    <div class="card card-pad" id="phrases">
+        <div class="card-title">
+            <div class="title-left"><span class="title-icon">ϟ</span>Quick Phrases</div>
+        </div>
+        <div class="phrases">
+            <button class="phrase pink" data-phrase="I need help"><span>♙</span>Help</button>
+            <button class="phrase blue" data-phrase="I need water"><span>♢</span>Water</button>
+            <button class="phrase green" data-phrase="I need food"><span>♜</span>Food</button>
+            <button class="phrase purple" data-phrase="Where is the bathroom?"><span>♧</span>Bathroom</button>
+            <button class="phrase orange" data-phrase="Thank you"><span>♡</span>Thank You</button>
+            <button class="phrase teal" data-phrase="I am fine"><span>☻</span>I am fine</button>
+            <button class="phrase blue" data-phrase="Please help me"><span>✋</span>Please</button>
+            <button class="phrase purple" data-phrase="Where is the hospital?"><span>✚</span>Hospital</button>
+        </div>
+        <button class="btn more-phrases" id="more-phrases">••• &nbsp; More Phrases</button>
+    </div>
+</section>
+
+</div>
+
+<footer class="footer">
+    <span>SignBridge AI &nbsp; v1.0</span>
+    <div class="footer-links">
+        <a href="#about">Accessibility</a>
+        <a href="#settings">Privacy</a>
+        <a href="#about">Help</a>
+    </div>
+</footer>
+</div>
+</main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+let cameraStream = null;
+let toastTimer;
+
+function notify(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
+}
+
+const video = document.getElementById("camera-video");
+const placeholder = document.getElementById("camera-placeholder");
+
+
+let predictionTimer = null;
+let predictionInProgress = false;
+let lastAddedSign = "";
+let repeatedSignCount = 0;
+
+const captureCanvas = document.createElement("canvas");
+captureCanvas.width = 128;
+captureCanvas.height = 128;
+
+const captureContext = captureCanvas.getContext("2d");
+
+async function predictCurrentFrame() {
+    if (!cameraStream || video.readyState < 2 || predictionInProgress) {
+        return;
+    }
+
+    predictionInProgress = true;
+
+    try {
+        // Match the RGB image input expected by the model
+        captureContext.drawImage(video, 0, 0, 128, 128);
+
+        const image = captureCanvas.toDataURL("image/jpeg", 0.8);
+
+        const response = await fetch("/api/predict", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ image: image })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || "Prediction failed");
+        }
+
+        const sign = String(result.prediction);
+        const confidence = Number(result.confidence);
+
+        document.getElementById("prediction-symbol").textContent = sign;
+        document.getElementById("prediction-label").textContent =
+            "Detected class: " + sign;
+        document.getElementById("prediction-confidence").textContent =
+            "Confidence: " + confidence.toFixed(2) + "%";
+
+        document.getElementById("confidence-bar").style.width =
+            Math.max(0, Math.min(100, confidence)) + "%";
+
+        document.getElementById("model-status").textContent =
+            "Prediction active";
+
+        document.getElementById("app-status").textContent =
+            "Recognizing signs";
+
+        // Only add a sign after several consecutive matching predictions.
+        // This reduces accidental repeated letters while the hand is held.
+        if (confidence >= 80 && sign === lastAddedSign) {
+            repeatedSignCount++;
+        } else {
+            lastAddedSign = sign;
+            repeatedSignCount = confidence >= 80 ? 1 : 0;
+        }
+
+        if (repeatedSignCount === 5) {
+            const current = sentence.value;
+            sentence.value = current ? current + sign : sign;
+            repeatedSignCount = 0;
+        }
+
+    } catch (error) {
+        console.error("Prediction error:", error);
+        document.getElementById("model-status").textContent =
+            "Prediction error";
+    } finally {
+        predictionInProgress = false;
+    }
+}
+
+function startPrediction() {
+    if (predictionTimer !== null) {
+        return;
+    }
+
+    predictionTimer = setInterval(predictCurrentFrame, 700);
+}
+
+function stopPrediction() {
+    if (predictionTimer !== null) {
+        clearInterval(predictionTimer);
+        predictionTimer = null;
+    }
+
+    predictionInProgress = false;
+    lastAddedSign = "";
+    repeatedSignCount = 0;
+}
+
+
+async function startCamera() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        notify("Camera access is not supported in this browser.");
+        return;
+    }
+
+    try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "user" },
+            audio: false
+        });
+
+        video.srcObject = cameraStream;
+        video.onloadeddata = startPrediction;
+        video.style.display = "block";
+        placeholder.style.display = "none";
+
+        document.getElementById("camera-state").textContent = "Camera connected";
+        document.getElementById("camera-status").textContent = "Webcam connected";
+        document.getElementById("app-status").textContent = "Camera ready";
+        document.getElementById("camera-help").textContent =
+            "Camera is running. Sign recognition still needs a trained model.";
+        notify("Camera started successfully.");
+    } catch (error) {
+        let message = "Could not access camera. Check browser permissions.";
+        if (error.name === "NotAllowedError") {
+            message = "Camera permission was denied. Allow camera access in your browser.";
+        } else if (error.name === "NotFoundError") {
+            message = "No camera was found on this device.";
+        }
+        notify(message);
+    }
+}
+
+function stopCamera() {
+  stopPrediction();
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+    }
+
+    video.srcObject = null;
+    video.style.display = "none";
+    placeholder.style.display = "block";
+    document.getElementById("camera-state").textContent = "Camera off";
+    document.getElementById("camera-status").textContent = "Not connected";
+    document.getElementById("app-status").textContent = "Ready to begin";
+    document.getElementById("camera-help").textContent =
+        "Camera access requires your permission. Sign recognition is not connected yet.";
+    notify("Camera stopped.");
+}
+
+document.getElementById("start-camera").addEventListener("click", startCamera);
+document.getElementById("start-camera-text").addEventListener("click", startCamera);
+document.getElementById("stop-camera").addEventListener("click", stopCamera);
+document.getElementById("stop-camera-text").addEventListener("click", stopCamera);
+
+document.getElementById("flip-camera").addEventListener("click", () => {
+    notify("Camera switching can be added next.");
+});
+
+const sentence = document.getElementById("sentence");
+
+document.querySelectorAll("[data-phrase]").forEach(button => {
+    button.addEventListener("click", () => {
+        const phrase = button.dataset.phrase;
+        sentence.value = sentence.value.trim()
+            ? sentence.value.trim().replace(/[.!?]+$/, "") + ". " + phrase
+            : phrase;
+        sentence.focus();
+        notify("Phrase added to sentence.");
+    });
+});
+
+document.getElementById("more-phrases").addEventListener("click", () => {
+    notify("More phrases are available in the phrase buttons above.");
+});
+
+document.getElementById("clear-sentence").addEventListener("click", () => {
+    sentence.value = "";
+    notify("Sentence cleared.");
+});
+
+document.getElementById("copy-sentence").addEventListener("click", async () => {
+    const text = sentence.value.trim();
+    if (!text) {
+        notify("Enter or select a sentence first.");
+        return;
+    }
+
+    try {
+        await navigator.clipboard.writeText(text);
+        notify("Sentence copied.");
+    } catch (error) {
+        sentence.focus();
+        sentence.select();
+        const copied = document.execCommand("copy");
+        notify(copied ? "Sentence copied." : "Copy failed. Please copy the selected text.");
+    }
+});
+
+
+async function saveHistory(text) {
+    try {
+        const response = await fetch("/api/history", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ text: text })
+        });
+
+        if (!response.ok) {
+            throw new Error("Could not save conversation.");
+        }
+
+        await renderHistory();
+    } catch (error) {
+        notify("Could not save history. Check your connection.");
+    }
+}
+
+async function renderHistory() {
+    const list = document.getElementById("history-list");
+
+    try {
+        const response = await fetch("/api/history");
+
+        if (!response.ok) {
+            throw new Error("Could not load history.");
+        }
+
+        const history = await response.json();
+        list.replaceChildren();
+
+        if (history.length === 0) {
+            const empty = document.createElement("p");
+            empty.className = "note";
+            empty.textContent = "Your spoken phrases will appear here.";
+            list.appendChild(empty);
+            return;
+        }
+
+        history.forEach(item => {
+            const row = document.createElement("div");
+            row.className = "history-item";
+
+            const initial = document.createElement("div");
+            initial.className = "history-initial";
+            initial.textContent = item.text.charAt(0).toUpperCase();
+
+            const copy = document.createElement("div");
+            copy.className = "history-copy";
+
+            const phrase = document.createElement("p");
+            phrase.textContent = item.text;
+
+            const time = document.createElement("small");
+            time.textContent = item.created_at;
+
+            copy.append(phrase, time);
+
+            const speak = document.createElement("button");
+            speak.type = "button";
+            speak.textContent = "🔊";
+            speak.title = "Speak this phrase";
+            speak.addEventListener("click", () => {
+                speakText(item.text, false);
+            });
+
+            row.append(initial, copy, speak);
+            list.appendChild(row);
+        });
+    } catch (error) {
+        list.textContent = "Could not load history. Please refresh.";
+    }
+}
+
+
+function speakText(text, shouldSave) {
+    if (!text.trim()) {
+        notify("Enter or select a sentence first.");
+        return;
+    }
+
+    if (!("speechSynthesis" in window)) {
+        notify("Speech is not supported in this browser.");
+        return;
+    }
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-IN";
+
+    utterance.onstart = () => {
+        document.getElementById("speech-status").textContent = "Speaking...";
+    };
+    utterance.onend = () => {
+        document.getElementById("speech-status").textContent = "Speech finished.";
+    };
+    utterance.onerror = () => {
+        document.getElementById("speech-status").textContent = "Speech could not be played.";
+    };
+
+    window.speechSynthesis.speak(utterance);
+
+    if (shouldSave) {
+        saveHistory(text);
+    }
+}
+
+document.getElementById("speak-sentence").addEventListener("click", () => {
+    speakText(sentence.value.trim(), true);
+});
+
+document.getElementById("header-speak").addEventListener("click", () => {
+    speakText(sentence.value.trim(), false);
+});
+
+document.getElementById("clear-history").addEventListener("click", async () => {
+    if (!confirm("Delete all saved conversation history?")) {
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/history", {
+            method: "DELETE"
+        });
+
+        if (!response.ok) {
+            throw new Error("Could not clear history.");
+        }
+
+        await renderHistory();
+        notify("Conversation history cleared.");
+    } catch (error) {
+        notify("Could not clear history.");
+    }
+});
+
+document.querySelectorAll(".nav a").forEach(link => {
+    link.addEventListener("click", () => {
+        document.querySelectorAll(".nav a").forEach(item => item.classList.remove("active"));
+        link.classList.add("active");
+    });
+});
+
+window.addEventListener("beforeunload", () => {
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+    }
+});
+
+renderHistory();
+</script>
+</body>
+</html>
